@@ -37,5 +37,10 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
             }
         });
     }));
-
+exports.verifyAdmin = (req,res,next)=>{
+    if(req.user.admin)
+    {
+        next();
+    }
+}
 exports.verifyUser = passport.authenticate('jwt', {session: false});

@@ -2,8 +2,6 @@ var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var Exhibitions = require('../models/exhibition');
-var passport = require('passport');
-var passportLocal = require('passport-local');
 var authenticate = require('../authenticate');
 const cors = require('./cors');
 
@@ -16,6 +14,7 @@ exhibitionRouter.route('/')
 .options(cors.corsWithOptions,(req,res)=>{res.sendStatus(200);})
 .get(cors.cors,(req,res,next)=>{
     Exhibitions.find({})
+    .populate('Paintings')
     .then((items)=>{
         res.statusCode=200;
         res.setHeader('Content-Type','application/json');
@@ -23,7 +22,7 @@ exhibitionRouter.route('/')
     },(err)=>next(err))
     .catch((err)=>next(err));
 })
-.post(cors.corsWithOptions,(req,res,next)=>{
+.post(cors.corsWithOptions,authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next)=>{
     Exhibitions.create(req.body)
     .then((item)=>{
         res.statusCode=200;
@@ -36,7 +35,7 @@ exhibitionRouter.route('/')
     res.statusCode = 403;
     res.end("No Put Request on this Route");
 })
-.delete(cors.corsWithOptions,(req,res,next)=>{
+.delete(cors.corsWithOptions,authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next)=>{
     Exhibitions.remove({})
     .then((ans)=>{
         res.statusCode=200;

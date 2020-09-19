@@ -11,7 +11,7 @@ const galleryRouter = express.Router();
 galleryRouter.use(bodyParser.json());
 
 galleryRouter.route('/')
-//.options(cors.corsWithOptions,(req,res)=>{res.sendStatus(200);})
+.options(cors.corsWithOptions,(req,res)=>{res.sendStatus(200);})
 .get(cors.corsWithOptions,(req,res,next)=>{
    Gallery.find({})
    .populate('user')
@@ -23,7 +23,6 @@ galleryRouter.route('/')
     },(err)=>next(err))
     .catch((err)=>next(err));
 })
-
 .post(cors.corsWithOptions,authenticate.verifyUser,(req,res,next)=>{
     req.body.user = req.user._id
     Gallery.create(req.body)
@@ -36,6 +35,7 @@ galleryRouter.route('/')
         .catch((err)=>next(err));
 })
 galleryRouter.route('/:gId')
+.options(cors.corsWithOptions,(req,res)=>{res.sendStatus(200);})
 .get(cors.corsWithOptions,authenticate.verifyUser,(req,res,next)=>{
     Gallery.findById(req.params.gId)
     .then((item)=>{
@@ -91,6 +91,7 @@ galleryRouter.route('/:gId')
     .catch((err)=>next(err))
 })
 galleryRouter.route('/:gId/paintings')
+.options(cors.corsWithOptions,(req,res)=>{res.sendStatus(200);})
 .get(cors.cors,authenticate.verifyUser,(req,res,next)=>{
     Paintings.find({})
     .populate('artist')
